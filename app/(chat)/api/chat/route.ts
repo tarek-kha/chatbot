@@ -1,4 +1,3 @@
-import { geolocation, ipAddress } from "@vercel/functions";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -81,14 +80,7 @@ export async function POST(request: Request) {
     const { id, message, messages, selectedChatModel, selectedVisibilityType } =
       requestBody;
 
-    const [botIdResult, session] = await Promise.all([
-      checkBotId().catch(() => null),
-      auth(),
-    ]);
-
-    if (botIdResult?.isBot) {
-      return new ChatbotError("forbidden:api").toResponse();
-    }
+    const session = await auth();
 
     if (!session?.user) {
       return new ChatbotError("unauthorized:chat").toResponse();
